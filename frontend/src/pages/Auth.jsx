@@ -3,6 +3,9 @@ import { supabase } from '../lib/supabase';
 import { Button, ErrorNote, Field, Input } from '../components/ui';
 import Soleil, { Lisiere } from '../components/Soleil';
 
+// La phrase d'accueil, sous le nom de l'app.
+const TAGLINE = "Fidèle dans les petites choses, chaque jour.";
+
 const MESSAGES = {
   'Invalid login credentials': 'Email ou mot de passe incorrect.',
   'User already registered': 'Un compte existe déjà avec cet email. Connecte-toi.',
@@ -42,11 +45,20 @@ export default function Auth() {
 
   return (
     <div className="flex min-h-screen flex-col bg-[#17120e] text-[#fbf9f3] md:flex-row" data-theme="dark">
-      <div className="flex flex-1 flex-col justify-between px-6 pb-8 pt-[calc(env(safe-area-inset-top)+2.5rem)] md:p-14">
-        <div>
-          <Soleil value={0.62} size={92} petals={20} tones={['rouge', 'orange', 'jaune']} />
-          <h1 className="mt-6 font-display text-5xl font-extrabold leading-[0.95] md:text-7xl">Kairos</h1>
-          <p className="mt-3 max-w-sm text-lg text-white/75">Le temps fixé. Tes rendez-vous avec Dieu, ton corps, tes études et ceux que tu sers.</p>
+      {/* Sa photo : le ciel, l'herbe et le pagne d'ou vient tout l'univers de l'app. */}
+      <div className="relative h-[58svh] min-h-[340px] overflow-hidden md:h-auto md:min-h-screen md:flex-1">
+        <img
+          src="/images/accueil.jpg"
+          alt=""
+          className="absolute inset-0 h-full w-full object-cover object-[50%_28%]"
+          fetchPriority="high"
+        />
+        <div className="absolute bottom-0 left-0 max-w-[88%] bg-[#17120e] px-6 pb-5 pt-5 md:bottom-12 md:left-12 md:max-w-md md:px-8 md:py-7">
+          <div className="flex items-center gap-3">
+            <Soleil value={0.62} size={44} petals={16} tones={['rouge', 'orange', 'jaune']} />
+            <h1 className="font-display text-5xl font-extrabold leading-none md:text-6xl">Kairos</h1>
+          </div>
+          <p className="mt-3 text-[1.05rem] leading-snug text-white/80">{TAGLINE}</p>
         </div>
       </div>
       <Lisiere className="md:hidden" />

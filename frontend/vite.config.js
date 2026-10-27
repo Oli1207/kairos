@@ -31,7 +31,7 @@ export default defineConfig({
         ],
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,png,svg,woff2,webmanifest}'],
+        globPatterns: ['**/*.{js,css,html,png,jpg,svg,woff2,webmanifest}'],
         navigateFallback: '/index.html',
         // Reception des notifications push (fichier autonome dans public/).
         importScripts: ['/push-sw.js'],
