@@ -1,0 +1,5 @@
+# Secrets locaux
+supabase/secrets.local.md
+.env
+.env.local
+node_modules

@@ -1,0 +1,255 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Kairos — l'univers de la photo.
+
+   Une fin d'apres-midi sur un terrain d'herbe : ciel bleu-gris charge de nuages
+   blancs, herbe olive et paille. Elle porte un pagne wax noir imprime de
+   soleils concentriques rouges, orange et jaunes, des boucles d'oreilles en
+   or, un bracelet de perles nacrees. Le grain d'une photo argentique.
+
+   Regles :
+   - aplats de couleur, aucun degrade ;
+   - angles presque droits ;
+   - filets encres plutot qu'ombres portees ;
+   - le motif « soleil wax » sert de jauge de progression ;
+   - le rouge est reserve au sacre (rendez-vous spirituels) et aux actions
+     principales.
+   Theme jour = « Ciel ». Theme nuit = « Pagne » (le fond noir du tissu).
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Polices auto-hebergees (licence SIL OFL), sous-ensemble latin. */
+@font-face {
+  font-family: 'Bricolage Grotesque';
+  src: url('/fonts/bricolage.woff2') format('woff2');
+  font-weight: 200 800;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'DM Sans';
+  src: url('/fonts/dm-sans.woff2') format('woff2');
+  font-weight: 400 700;
+  font-display: swap;
+}
+
+:root,
+[data-theme='light'] {
+  /* Ciel : le jour */
+  --sky: #e8ebe6;            /* nuages */
+  --paper: #fbf9f3;          /* perle nacree */
+  --paper-2: #f2efe6;
+  --ink: #17120e;            /* fond noir du pagne */
+  --muted: #6c6258;
+  --line: #d8d3c6;
+  --line-strong: #17120e;
+
+  --rouge: #c2281d;          /* petales rouges du wax */
+  --rouge-soft: #f6dcd6;
+  --orange: #dd5a1f;
+  --orange-soft: #f8e1d2;
+  --jaune: #eeb526;
+  --jaune-soft: #f8edc9;
+  --or: #a97d25;             /* boucles d'oreilles */
+  --ciel: #4f808b;           /* ciel bleu-gris, fonce pour le texte */
+  --ciel-soft: #dbe6e5;
+  --herbe: #586a24;          /* herbe olive */
+  --herbe-soft: #e3e6cf;
+  --paille: #bfa262;
+  --peau: #8a4a2a;
+
+  --on-ink: #fbf9f3;
+  color-scheme: light;
+}
+
+[data-theme='dark'] {
+  /* Pagne : la nuit */
+  --sky: #14100d;
+  --paper: #1f1914;
+  --paper-2: #29211b;
+  --ink: #f3ebdc;
+  --muted: #b2a594;
+  --line: #3b3129;
+  --line-strong: #f3ebdc;
+
+  --rouge: #e5493c;
+  --rouge-soft: #3d1a15;
+  --orange: #f0743a;
+  --orange-soft: #3d2215;
+  --jaune: #f5c847;
+  --jaune-soft: #3a3016;
+  --or: #d9ab4f;
+  --ciel: #8fb8c0;
+  --ciel-soft: #1d2b2d;
+  --herbe: #a8b866;
+  --herbe-soft: #262c16;
+  --paille: #c9ad6c;
+  --peau: #d08a64;
+
+  --on-ink: #14100d;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-sky: var(--sky);
+  --color-paper: var(--paper);
+  --color-paper-2: var(--paper-2);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-rouge: var(--rouge);
+  --color-rouge-soft: var(--rouge-soft);
+  --color-orange: var(--orange);
+  --color-orange-soft: var(--orange-soft);
+  --color-jaune: var(--jaune);
+  --color-jaune-soft: var(--jaune-soft);
+  --color-or: var(--or);
+  --color-ciel: var(--ciel);
+  --color-ciel-soft: var(--ciel-soft);
+  --color-herbe: var(--herbe);
+  --color-herbe-soft: var(--herbe-soft);
+  --color-paille: var(--paille);
+  --color-on-ink: var(--on-ink);
+  --font-display: 'Bricolage Grotesque', 'DM Sans', system-ui, sans-serif;
+  --font-sans: 'DM Sans', system-ui, sans-serif;
+  --radius-sm: 2px;
+  --radius: 3px;
+}
+
+html, body, #root { min-height: 100%; }
+
+body {
+  margin: 0;
+  background: var(--sky);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Grain de pellicule, par-dessus tout, sans capter les clics. */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 100;
+  opacity: 0.07;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+[data-theme='dark'] body::after { opacity: 0.1; }
+
+h1, h2, h3, .display { font-family: var(--font-display); letter-spacing: -0.02em; }
+.num { font-variant-numeric: tabular-nums; }
+
+/* ─── Surfaces ────────────────────────────────────────────────────────────── */
+
+.card {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+/* Bande de couleur du domaine en tete de carte, comme une lisiere de pagne. */
+.card-esprit  { border-top: 3px solid var(--rouge); }
+.card-service { border-top: 3px solid var(--ciel); }
+.card-corps   { border-top: 3px solid var(--herbe); }
+.card-etudes  { border-top: 3px solid var(--orange); }
+
+.ink-block { background: var(--ink); color: var(--on-ink); border-radius: var(--radius); }
+
+/* ─── Boutons ─────────────────────────────────────────────────────────────── */
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.45rem;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  border: 1.5px solid transparent;
+  transition: background-color .15s, color .15s, border-color .15s, transform .1s;
+  white-space: nowrap;
+  user-select: none;
+}
+.btn:active { transform: translateY(1px); }
+.btn:disabled { opacity: .5; pointer-events: none; }
+.btn-sm { height: 2.1rem; padding: 0 .8rem; font-size: .85rem; }
+.btn-md { height: 2.75rem; padding: 0 1.1rem; font-size: .92rem; }
+.btn-lg { height: 3.25rem; padding: 0 1.4rem; font-size: 1rem; }
+.btn-primary { background: var(--rouge); color: #fff; }
+.btn-primary:hover { background: color-mix(in srgb, var(--rouge) 88%, black); }
+.btn-ink { background: var(--ink); color: var(--on-ink); }
+.btn-secondary { background: transparent; color: var(--ink); border-color: var(--line-strong); }
+.btn-secondary:hover { background: var(--paper-2); }
+.btn-ghost { background: transparent; color: var(--muted); }
+.btn-ghost:hover { color: var(--ink); background: var(--paper-2); }
+.btn-danger { background: transparent; color: var(--rouge); border-color: var(--rouge); }
+
+/* ─── Champs ──────────────────────────────────────────────────────────────── */
+
+.field-label { display: block; font-size: .78rem; font-weight: 600; color: var(--muted); margin-bottom: .3rem; text-transform: uppercase; letter-spacing: .04em; }
+.input {
+  width: 100%;
+  background: var(--paper);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-bottom: 1.5px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  padding: .65rem .75rem;
+  font-size: 16px; /* evite le zoom automatique d'iOS */
+  outline: none;
+}
+.input:focus { border-color: var(--ink); box-shadow: 0 0 0 1px var(--ink); }
+textarea.input { min-height: 5.5rem; resize: vertical; line-height: 1.45; }
+
+/* ─── Onglets ─────────────────────────────────────────────────────────────── */
+
+.tabs {
+  display: flex; gap: 0; overflow-x: auto; scrollbar-width: none; border-bottom: 1px solid var(--line);
+  /* Reste accroche en haut quand on fait defiler une longue page. */
+  position: sticky; top: 0; z-index: 20; background: var(--sky);
+  padding-top: env(safe-area-inset-top);
+  margin-inline: -1rem; padding-inline: 1rem;
+  scroll-snap-type: x proximity;
+}
+@media (min-width: 768px) { .tabs { margin-inline: 0; padding-inline: 0; padding-top: 0; } }
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  flex-shrink: 0; padding: .7rem .9rem; font-weight: 600; font-size: .9rem; color: var(--muted);
+  border-bottom: 3px solid transparent; margin-bottom: -1px;
+}
+.tab[aria-selected='true'] { color: var(--ink); border-bottom-color: var(--rouge); }
+
+/* ─── Divers ──────────────────────────────────────────────────────────────── */
+
+.chip {
+  display: inline-flex; align-items: center; gap: .3rem;
+  padding: .2rem .55rem; font-size: .75rem; font-weight: 600;
+  border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--paper);
+}
+.chip[aria-pressed='true'] { background: var(--ink); color: var(--on-ink); border-color: var(--ink); }
+
+.check {
+  width: 2.4rem; height: 2.4rem; flex-shrink: 0;
+  display: inline-flex; align-items: center; justify-content: center;
+  border: 1.5px solid var(--line-strong); border-radius: 50%;
+  transition: background-color .15s;
+}
+.check[data-state='fait']   { background: var(--herbe); border-color: var(--herbe); color: #fff; }
+.check[data-state='leger']  { background: var(--jaune); border-color: var(--jaune); color: var(--ink); }
+.check[data-state='retard'] { background: var(--orange); border-color: var(--orange); color: #fff; }
+.check[data-state='manque'] { border-style: dashed; color: var(--muted); }
+.check[data-state='repos']  { border-color: var(--ciel); color: var(--ciel); border-style: dotted; }
+
+.safe-bottom { padding-bottom: calc(env(safe-area-inset-bottom) + 4.5rem); }
+
+@keyframes sheet-in { from { transform: translateY(100%); } to { transform: none; } }
+.sheet-in { animation: sheet-in .22s ease-out; }
+@keyframes fade-in { from { opacity: 0; transform: translateX(12px); } to { opacity: 1; transform: none; } }
+.fade-in { animation: fade-in .25s ease-out; }
+@keyframes pulse-dot { 50% { opacity: .35; } }
+.pulse-dot { animation: pulse-dot 1.6s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
