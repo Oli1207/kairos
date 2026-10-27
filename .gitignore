@@ -4,3 +4,4 @@ supabase/secrets.local.md
 .env.local
 node_modules
 supabase/*.local.md
+supabase/*.local.sql
