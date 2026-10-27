@@ -68,7 +68,7 @@ export default function Auth() {
       {/* Le formulaire, simplement pose sur la photo. */}
       <div className="relative w-full bg-[#e8ebe6] text-[#17120e] shadow-[0_-8px_30px_rgba(23,18,14,0.25)] md:max-w-[360px] md:shadow-[0_12px_40px_rgba(23,18,14,0.35)]" data-theme="light">
         <form onSubmit={submit} className="space-y-3 px-6 pb-[calc(env(safe-area-inset-bottom)+1.25rem)] pt-5 md:space-y-3.5 md:p-8">
-          <h2 className="font-display text-2xl font-extrabold">{mode === 'login' ? 'Bon retour' : 'Commencer ma saison'}</h2>
+          {mode === 'signup' && <h2 className="font-display text-2xl font-extrabold">Commencer ma saison</h2>}
           {mode === 'signup' && (
             <Field label="Ton prénom"><Input value={form.name} onChange={set('name')} required autoComplete="given-name" /></Field>
           )}
