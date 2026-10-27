@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { Button, ErrorNote, Field, Input } from '../components/ui';
-import Soleil, { Lisiere } from '../components/Soleil';
+import { Lisiere, MiniSoleil } from '../components/Soleil';
 
 // La phrase d'accueil, sous le nom de l'app.
 const TAGLINE = "Fidèle dans les petites choses, chaque jour.";
@@ -46,25 +46,26 @@ export default function Auth() {
   return (
     <div className="flex min-h-screen flex-col bg-[#17120e] text-[#fbf9f3] md:flex-row" data-theme="dark">
       {/* Sa photo : le ciel, l'herbe et le pagne d'ou vient tout l'univers de l'app. */}
-      <div className="relative h-[58svh] min-h-[340px] overflow-hidden md:h-auto md:min-h-screen md:flex-1">
+      {/* Sa photo, en entier et sans rien par-dessus : c'est elle qu'on doit voir.
+          Sur ordinateur, la colonne garde le format portrait de la photo. */}
+      <div className="relative h-[66svh] min-h-[380px] overflow-hidden md:h-screen md:min-h-0 md:flex-none md:aspect-[9/16]">
         <img
           src="/images/accueil.jpg"
           alt=""
-          className="absolute inset-0 h-full w-full object-cover object-[50%_28%]"
+          className="absolute inset-0 h-full w-full object-cover object-[50%_22%] md:object-center"
           fetchPriority="high"
         />
-        <div className="absolute bottom-0 left-0 max-w-[88%] bg-[#17120e] px-6 pb-5 pt-5 md:bottom-12 md:left-12 md:max-w-md md:px-8 md:py-7">
-          <div className="flex items-center gap-3">
-            <Soleil value={0.62} size={44} petals={16} tones={['rouge', 'orange', 'jaune']} />
-            <h1 className="font-display text-5xl font-extrabold leading-none md:text-6xl">Kairos</h1>
-          </div>
-          <p className="mt-3 text-[1.05rem] leading-snug text-white/80">{TAGLINE}</p>
+        {/* Marque discrete dans le coin, lisible sur le ciel grace a une ombre douce. */}
+        <div className="absolute left-4 top-[calc(env(safe-area-inset-top)+0.9rem)] flex items-center gap-1.5 md:left-6 md:top-6" style={{ textShadow: '0 1px 6px rgba(23,18,14,0.55)' }}>
+          <MiniSoleil size={20} />
+          <h1 className="font-display text-lg font-extrabold tracking-tight text-white">Kairos</h1>
         </div>
       </div>
       <Lisiere className="md:hidden" />
-      <div className="bg-[#e8ebe6] text-[#17120e] md:flex md:w-[440px] md:items-center" data-theme="light">
-        <form onSubmit={submit} className="w-full space-y-4 px-6 py-8 pb-[calc(env(safe-area-inset-bottom)+2rem)] md:px-10">
-          <h2 className="font-display text-2xl font-extrabold">{mode === 'login' ? 'Bon retour' : 'Commencer ma saison'}</h2>
+      <div className="flex-1 bg-[#e8ebe6] text-[#17120e] md:flex md:items-center md:justify-center" data-theme="light">
+        <form onSubmit={submit} className="w-full space-y-4 px-6 py-7 pb-[calc(env(safe-area-inset-bottom)+2rem)] md:max-w-sm md:px-0">
+          <p className="text-xs font-bold uppercase tracking-[0.14em] text-rouge">{TAGLINE}</p>
+          <h2 className="-mt-2 font-display text-2xl font-extrabold">{mode === 'login' ? 'Bon retour' : 'Commencer ma saison'}</h2>
           {mode === 'signup' && (
             <Field label="Ton prénom"><Input value={form.name} onChange={set('name')} required autoComplete="given-name" /></Field>
           )}
