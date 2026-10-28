@@ -1,11 +1,17 @@
 import { MiniSoleil } from '../components/Soleil';
+import { configError } from '../lib/supabase';
 
 /** Affiche tant que le fichier .env n'est pas rempli (developpement uniquement). */
 export default function Setup() {
   return (
     <div className="mx-auto max-w-lg px-6 py-16">
       <MiniSoleil size={40} />
-      <h1 className="mt-4 font-display text-3xl font-extrabold">Supabase n'est pas encore branché</h1>
+      <h1 className="mt-4 font-display text-3xl font-extrabold">{configError ? 'La configuration Supabase est invalide' : "Supabase n'est pas encore branché"}</h1>
+      {configError && (
+        <p className="mt-3 border-l-4 border-rouge bg-rouge-soft px-3 py-2">
+          {configError} Recopie la vraie valeur (Supabase → Project Settings → API), puis redéploie.
+        </p>
+      )}
       <p className="mt-3 text-muted">
         Copie <code className="bg-paper-2 px-1">frontend/.env.example</code> en <code className="bg-paper-2 px-1">frontend/.env</code>,
         colle l'URL et la clé « anon » de ton projet Supabase, puis relance <code className="bg-paper-2 px-1">npm run dev</code>.
