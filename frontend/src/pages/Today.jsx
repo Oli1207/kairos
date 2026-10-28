@@ -86,7 +86,7 @@ export default function Today() {
       {activeFast && <FastBanner fast={activeFast} />}
 
       {!log?.energy ? <MorningCheckin onSave={patch} /> : (
-        <div className="mb-5 flex items-center gap-4">
+        <div className="mb-5 flex items-center gap-4" data-tour="journee">
           <Soleil value={habitItems.length ? doneCount / habitItems.length : 0} size={104} petals={24}>
             <span className="font-display text-2xl font-extrabold num">{doneCount}/{habitItems.length}</span>
           </Soleil>
@@ -112,7 +112,7 @@ export default function Today() {
       <div>
       <SectionTitle>Ton jour</SectionTitle>
       {!timed.length && <p className="mb-4 text-sm text-muted">Aucun rendez-vous à heure fixe aujourd'hui.</p>}
-      <ol className="mb-6 border-l-2 border-ink">
+      <ol className="mb-6 border-l-2 border-ink" data-tour="frise">
         {timed.map((item) => {
           const marker = !nowPlaced && day === today() && item.at > now;
           if (marker) nowPlaced = true;
@@ -150,7 +150,7 @@ export default function Today() {
         </Link>
       )}
       <div className="mb-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
-        <Link to="/corps?onglet=sucre&sos=1" className="ink-block flex items-center gap-3 p-4">
+        <Link to="/corps?onglet=sucre&sos=1" className="ink-block flex items-center gap-3 p-4" data-tour="sos">
           <Siren className="h-6 w-6 text-[var(--jaune)]" />
           <div className="flex-1">
             <p className="font-display text-lg font-bold">SOS envie</p>
@@ -256,7 +256,7 @@ function HabitRow({ item, checkin, light, onTap, flat }) {
         {version && <p className="truncate text-sm text-muted">{version}</p>}
         {state === 'retard' && <p className="text-xs font-semibold text-orange">Rattrapé avec {minutesLabel(checkin.late_min)} de retard</p>}
       </div>
-      <button type="button" className="check" data-state={state || undefined} onClick={onTap} aria-label={state ? `Modifier ${h.title}` : `Pointer ${h.title}`}>
+      <button type="button" className="check" data-tour="check" data-state={state || undefined} onClick={onTap} aria-label={state ? `Modifier ${h.title}` : `Pointer ${h.title}`}>
         {state && state !== 'manque' && state !== 'repos' && <Check className="h-5 w-5" strokeWidth={3} />}
         {state === 'repos' && <span className="text-[0.6rem] font-bold">repos</span>}
       </button>
@@ -322,7 +322,7 @@ function MorningCheckin({ onSave }) {
   const [mood, setMood] = useState(null);
   const save = () => onSave({ sleep_hours: sleep, energy, mood, mode: energy <= 2 ? 'leger' : 'plein' });
   return (
-    <Card domain="esprit" className="mb-6 p-4">
+    <Card domain="esprit" className="mb-6 p-4" data-tour="checkin">
       <div className="flex items-center gap-2"><Sparkles className="h-5 w-5 text-rouge" /><h2 className="text-lg font-bold">Check-in du matin</h2></div>
       <p className="mb-3 text-sm text-muted">10 secondes pour que la journée s'adapte à toi.</p>
       <p className="field-label">Sommeil</p>

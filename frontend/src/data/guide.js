@@ -1,64 +1,7 @@
 /**
- * Le didacticiel : visite d'accueil, guide complet et aide de chaque page.
+ * Le didacticiel : guide complet et aide de chaque page (la visite guidee est dans tour.js).
  * Ecrit pour elle, au tutoiement, sans jargon.
  */
-
-export const TOUR = [
-  {
-    key: 'bienvenue',
-    title: 'Bienvenue dans Kairos',
-    text: 'Kairos, c\'est « le temps fixé ». Ta saison tient sur une idée : des rendez-vous sacrés à heure fixe, et tout le reste s\'organise autour. Cette visite prend 1 minute.',
-    art: 'soleil',
-  },
-  {
-    key: 'jour',
-    title: 'Ton jour, d\'un coup d\'œil',
-    text: 'L\'écran Jour montre ta frise : rendez-vous, cours et séances placées, avec la ligne rouge « maintenant ». Touche le rond à droite pour pointer. Touche-le encore pour choisir « version légère », « manqué » ou « jour de repos ».',
-    art: 'frise',
-  },
-  {
-    key: 'leger',
-    title: 'Jour plein ou jour léger',
-    text: 'Chaque matin, un check-in de 10 secondes : sommeil, énergie, humeur. Si l\'énergie est basse, Kairos passe en jour léger : chaque habitude affiche sa version minimale. Faire un peu compte : on ne casse pas la chaîne. Tes rendez-vous avec Dieu, eux, restent.',
-    art: 'leger',
-  },
-  {
-    key: 'semaine',
-    title: 'Le dimanche, tu prends le volant',
-    text: 'Dans Semaine : le bilan (ce qui a tenu, ce que je remarque), puis le Planning. « Placer automatiquement » range sport, anglais, ECAA et contenu dans tes vrais créneaux libres, calculés à partir de ton emploi du temps.',
-    art: 'semaine',
-  },
-  {
-    key: 'esprit',
-    title: 'Esprit et service',
-    text: 'Méditation guidée (Écriture, Observation, Application, Prière), sujets de prière et mur des exaucements, jeûne avec compteur. Pour l\'intercession, le Mode prière te présente une carte à la fois : tu glisses, tu passes à la suivante.',
-    art: 'priere',
-  },
-  {
-    key: 'ecaa',
-    title: 'ECAA, comme une pro',
-    text: 'Une formation complète d\'aidante (écoute active, repérage du risque suicidaire, orientation, prendre soin de toi), un protocole de crise en un tap, un journal d\'écoute sans données sur les personnes, et le tableau de la vision d\'ECAA.',
-    art: 'ecaa',
-  },
-  {
-    key: 'etudes',
-    title: 'Étudier mieux, pas plus',
-    text: 'Le tableau de bord te dit quoi étudier maintenant. Kairos utilise ce qui marche : se tester plutôt que relire, revoir chaque chapitre à J+1, J+3, J+7, J+14, J+30, et alterner les matières. Les devoirs et les examens sont suivis jour par jour.',
-    art: 'etudes',
-  },
-  {
-    key: 'plus',
-    title: 'Le bouton +',
-    text: 'En bas à droite, partout : noter une idée, un mot, un sujet de prière, un devoir, un verre d\'eau, ou lancer le SOS envie. Deux taps, et tu retournes à ta vie.',
-    art: 'plus',
-  },
-  {
-    key: 'iphone',
-    title: 'Dernière étape : l\'installer',
-    text: 'Dans Safari : bouton Partager, puis « Sur l\'écran d\'accueil ». Ouvre Kairos depuis l\'icône, puis Réglages → Activer les rappels. Le guide complet reste dans Réglages → Guide, et chaque page a un bouton « ? ».',
-    art: 'iphone',
-  },
-];
 
 export const GUIDE = [
   {

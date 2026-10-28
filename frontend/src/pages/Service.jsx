@@ -80,7 +80,7 @@ function Intercession({ habits }) {
 
   return (
     <div className="space-y-5">
-      <Card domain="service" className="p-4">
+      <Card domain="service" className="p-4" data-tour="intercession">
         <div className="flex items-baseline justify-between">
           <h2 className="text-lg font-bold">Aujourd'hui, {DAY_LABELS[weekday(today())]}</h2>
           <span className="text-sm num text-muted">{prayed}/{todays.length}</span>
@@ -255,7 +255,7 @@ function Listening() {
 
   return (
     <div className="space-y-5">
-      <button type="button" onClick={() => setSheet('crise')} className="flex w-full items-center gap-3 bg-rouge p-4 text-left text-white">
+      <button type="button" data-tour="crise" onClick={() => setSheet('crise')} className="flex w-full items-center gap-3 bg-rouge p-4 text-left text-white">
         <LifeBuoy className="h-7 w-7" />
         <span className="flex-1">
           <span className="block font-display text-xl font-bold">Protocole de crise</span>

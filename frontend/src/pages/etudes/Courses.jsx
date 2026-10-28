@@ -24,7 +24,7 @@ export default function Courses() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <p className="text-sm text-muted">{courses.length} matière{courses.length > 1 ? 's' : ''}</p>
-        <Button size="sm" icon={Plus} onClick={() => setAdding(true)}>Matière</Button>
+        <Button size="sm" icon={Plus} onClick={() => setAdding(true)} data-tour="ajout-matiere">Matière</Button>
       </div>
       {!courses.length && (
         <Empty title="Ajoute ta première matière">

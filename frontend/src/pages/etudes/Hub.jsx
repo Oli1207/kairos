@@ -59,7 +59,7 @@ export default function Hub({ habits, onTab }) {
   return (
     <div className="space-y-5 lg:grid lg:grid-cols-[1fr_320px] lg:gap-6 lg:space-y-0">
       <div className="space-y-5">
-        <Card domain="etudes" className="p-4">
+        <Card domain="etudes" className="p-4" data-tour="quoi-etudier">
           <div className="flex items-center gap-4">
             <Soleil value={todayMin / target} size={92} petals={24} tones={['orange', 'jaune']}>
               <span className="text-sm font-bold num">{todayMin}<span className="text-[0.6rem] text-muted">/{target}</span></span>

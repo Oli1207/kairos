@@ -1,9 +1,9 @@
-import { lazy, Suspense, useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import Layout from './components/Layout';
 import { Loading } from './components/ui';
 import { Toaster } from './components/toast';
-import Tour, { tourSeen } from './components/Tour';
+import { TourHost } from './components/Tour';
 import { useAuth } from './store/auth';
 import { useProfile } from './hooks/useData';
 import { supabaseReady } from './lib/supabase';
@@ -37,7 +37,7 @@ function Signed() {
   if (profile && !profile.onboarded) return <Onboarding profile={profile} />;
   return (
     <Suspense fallback={<Loading />}>
-      <FirstTour />
+      <TourHost />
       <Routes>
         <Route element={<Layout />}>
           <Route index element={<Today />} />
@@ -53,10 +53,4 @@ function Signed() {
       </Routes>
     </Suspense>
   );
-}
-
-/** La visite d'accueil s'ouvre une seule fois, juste apres l'accueil. */
-function FirstTour() {
-  const [open, setOpen] = useState(() => !tourSeen());
-  return open ? <Tour onClose={() => setOpen(false)} /> : null;
 }

@@ -1,144 +1,185 @@
-import { useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Check, Plus, Share } from 'lucide-react';
-import { TOUR } from '../data/guide';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { create } from 'zustand';
+import { GUIDED_TOUR } from '../data/tour';
 import { useScrollLock } from '../hooks/useScrollLock';
-import Soleil, { Lisiere, MiniSoleil } from './Soleil';
+import { MiniSoleil } from './Soleil';
 
-const KEY = 'kairos-tour-v1';
+const KEY = 'kairos-tour-v2';
 export const tourSeen = () => { try { return localStorage.getItem(KEY) === '1'; } catch { return true; } };
 const markSeen = () => { try { localStorage.setItem(KEY, '1'); } catch { /* ignore */ } };
 
-/** Visite d'accueil : 9 ecrans a faire defiler du doigt, rejouable depuis le guide. */
+/**
+ * La visite vit au niveau de l'app, pas d'une page : elle navigue de page en
+ * page sans disparaitre. Ouverte d'office au premier lancement.
+ */
+export const useTour = create((set) => ({
+  open: !tourSeen(),
+  start: () => set({ open: true }),
+  stop: () => set({ open: false }),
+}));
+
+export function TourHost() {
+  const { open, stop } = useTour();
+  return open ? <Tour onClose={stop} /> : null;
+}
+
+/** Premier element visible parmi une liste de selecteurs (la nav existe en double : mobile et bureau). */
+function findTarget(selectors) {
+  for (const sel of selectors || []) {
+    for (const el of document.querySelectorAll(sel)) {
+      const r = el.getBoundingClientRect();
+      if (r.width > 0 && r.height > 0 && getComputedStyle(el).visibility !== 'hidden') return el;
+    }
+  }
+  return null;
+}
+
+const PAD = 6;
+
+/**
+ * Visite guidee dans la vraie app : elle navigue de page en page, eclaire
+ * l'element dont on parle (le reste s'assombrit) et l'explique dans une bulle.
+ */
 export default function Tour({ onClose }) {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [i, setI] = useState(0);
-  const from = useRef(null);
-  const slide = TOUR[i];
-  const last = i === TOUR.length - 1;
-  const go = (n) => setI(Math.max(0, Math.min(TOUR.length - 1, n)));
-  const close = () => { markSeen(); onClose(); };
+  const [rect, setRect] = useState(null);
+  const [ready, setReady] = useState(false);
+  const [bubbleTop, setBubbleTop] = useState(null);
+  const step = GUIDED_TOUR[i];
+  const last = i === GUIDED_TOUR.length - 1;
   useScrollLock();
 
+  const here = `${location.pathname}${location.search}`;
+
+  // Aller sur la bonne page, attendre que l'element apparaisse, le centrer.
+  useEffect(() => {
+    let cancelled = false;
+    setReady(false);
+    setRect(null);
+    setBubbleTop(null);
+    if (step.route && here !== step.route) {
+      navigate(step.route);
+      return undefined;
+    }
+    if (!step.target) { setReady(true); return undefined; }
+    const started = Date.now();
+    const poll = () => {
+      if (cancelled) return;
+      const el = findTarget(step.target);
+      if (el) {
+        // Grand element : en haut de l'ecran, pour laisser la place a la bulle dessous.
+        const tall = el.getBoundingClientRect().height > window.innerHeight * 0.4;
+        el.scrollIntoView({ block: tall ? 'start' : 'center', behavior: 'instant' });
+        if (tall) window.scrollBy({ top: -16, behavior: 'instant' });
+        setTimeout(() => {
+          if (cancelled) return;
+          setRect(el.getBoundingClientRect());
+          setReady(true);
+        }, 120);
+      } else if (Date.now() - started < 2500) {
+        setTimeout(poll, 100);
+      } else {
+        setReady(true); // element absent (ex. donnees vides) : bulle centree
+      }
+    };
+    poll();
+    return () => { cancelled = true; };
+  }, [i, here]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Suivre l'element si la fenetre change de taille.
+  const remeasure = useCallback(() => {
+    const el = findTarget(step.target);
+    if (el) setRect(el.getBoundingClientRect());
+  }, [step]);
+  useEffect(() => {
+    window.addEventListener('resize', remeasure);
+    return () => window.removeEventListener('resize', remeasure);
+  }, [remeasure]);
+
+  const close = () => { markSeen(); onClose(); };
+  const go = (n) => { if (n >= 0 && n < GUIDED_TOUR.length) setI(n); };
+  const finish = () => { close(); navigate('/'); };
+
   return createPortal(
-    <div
-      className="fixed inset-0 z-[80] flex flex-col bg-sky"
-      onPointerDown={(e) => { from.current = e.clientX; }}
-      onPointerUp={(e) => { if (from.current == null) return; const d = e.clientX - from.current; from.current = null; if (d < -50) go(i + 1); if (d > 50) go(i - 1); }}
-    >
-      <Lisiere />
-      <div className="flex items-center justify-between px-5 pt-[calc(env(safe-area-inset-top)+0.75rem)]">
-        <span className="text-sm font-semibold text-muted num">{i + 1}/{TOUR.length}</span>
-        <button type="button" className="text-sm font-semibold text-muted" onClick={close}>Passer</button>
-      </div>
-      <div className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center px-6">
-        <div key={slide.key} className="fade-in">
-          <div className="mb-8 flex h-48 items-center justify-center"><Art kind={slide.art} /></div>
-          <h2 className="font-display text-3xl font-extrabold leading-tight">{slide.title}</h2>
-          <p className="mt-3 text-[1.02rem] leading-relaxed text-muted">{slide.text}</p>
-        </div>
-      </div>
-      <div className="mx-auto w-full max-w-md px-6 pb-[calc(env(safe-area-inset-bottom)+1.25rem)]">
-        <div className="mb-4 flex justify-center gap-1.5">
-          {TOUR.map((s, k) => (
-            <button key={s.key} type="button" aria-label={`Écran ${k + 1}`} onClick={() => go(k)} className="h-1.5 transition-all" style={{ width: k === i ? 22 : 8, background: k === i ? 'var(--rouge)' : 'var(--line)' }} />
-          ))}
-        </div>
-        <div className="flex gap-2">
-          {i > 0 && <button type="button" className="btn btn-secondary btn-lg" onClick={() => go(i - 1)}>Retour</button>}
-          <button type="button" className="btn btn-primary btn-lg flex-1" onClick={() => (last ? close() : go(i + 1))}>{last ? 'Commencer ma saison' : 'Suivant'}</button>
-        </div>
-      </div>
+    <div className="fixed inset-0 z-[90]" role="dialog" aria-label="Visite guidée">
+      {/* Le voile : un trou net autour de l'element, aucun degrade. */}
+      {rect ? (() => {
+        // Si la bulle recouvre le bas de l'element, la zone eclairee s'arrete juste au-dessus.
+        const bottom = bubbleTop != null && bubbleTop > rect.top && bubbleTop < rect.bottom + PAD
+          ? bubbleTop - 10 : rect.bottom + PAD;
+        return (
+        <div
+          className="pointer-events-none fixed"
+          style={{
+            left: rect.left - PAD, top: rect.top - PAD, width: rect.width + PAD * 2, height: Math.max(24, bottom - rect.top + PAD),
+            boxShadow: '0 0 0 9999px rgba(23,18,14,0.74)', outline: '2px solid var(--jaune)', borderRadius: 3,
+          }}
+        />
+        );
+      })() : <div className="fixed inset-0 bg-[rgba(23,18,14,0.74)]" />}
+
+      {ready && (
+        <Bubble
+          step={step} rect={rect} index={i} total={GUIDED_TOUR.length} last={last}
+          onPrev={() => go(i - 1)} onNext={() => (last ? finish() : go(i + 1))} onSkip={close} onPlace={setBubbleTop}
+        />
+      )}
     </div>,
     document.body,
   );
 }
 
-/** Petites illustrations faites avec les briques de l'app elle-meme. */
-function Art({ kind }) {
-  if (kind === 'soleil') return <Soleil value={0.7} size={170} petals={24} tones={['rouge', 'orange', 'jaune']}><MiniSoleil size={40} /></Soleil>;
-  if (kind === 'frise') {
-    return (
-      <div className="w-full max-w-xs border-l-2 border-ink">
-        {[['05:30', 'Méditation', 'fait'], ['06:00', 'Prière', 'retard'], ['now'], ['17:30', 'Sport', null]].map(([t, l, s]) => (t === 'now'
-          ? <div key="n" className="-ml-[5px] flex items-center gap-2 py-1"><span className="h-2 w-2 rounded-full bg-rouge" /><span className="h-px flex-1 bg-rouge" /><span className="text-[0.6rem] font-bold text-rouge">MAINTENANT</span></div>
-          : (
-            <div key={t} className="flex items-center gap-3 py-2 pl-3">
-              <span className="w-10 text-sm font-bold num">{t}</span>
-              <span className="flex-1 font-semibold">{l}</span>
-              <span className="check h-8 w-8" data-state={s || undefined}>{s && <Check className="h-4 w-4" strokeWidth={3} />}</span>
-            </div>
-          )))}
-      </div>
-    );
-  }
-  if (kind === 'leger') {
-    return (
-      <div className="w-full max-w-xs space-y-2">
-        <div className="flex gap-1.5"><span className="chip">Jour plein</span><span className="chip" aria-pressed="true">Jour léger</span></div>
-        <div className="card p-3"><p className="font-semibold">Sport</p><p className="text-sm text-muted line-through">Une séance guidée complète</p><p className="text-sm font-semibold text-herbe">10 minutes de marche active</p></div>
-        <div className="card p-3"><p className="font-semibold">Lecture</p><p className="text-sm font-semibold text-herbe">5 pages</p></div>
-      </div>
-    );
-  }
-  if (kind === 'semaine') {
-    const days = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
-    const fill = [['herbe'], ['orange'], ['herbe', 'ciel'], ['orange'], [], ['herbe', 'ciel'], ['orange']];
-    return (
-      <div className="flex w-full max-w-xs justify-between">
-        {days.map((d, k) => (
-          <div key={k} className="flex flex-col items-center gap-1">
-            <div className="flex h-28 w-7 flex-col justify-end gap-1 bg-paper-2 p-0.5">
-              {fill[k].map((c, j) => <span key={j} className="h-6 w-full" style={{ background: `var(--${c})` }} />)}
-            </div>
-            <span className="text-xs font-bold">{d}</span>
-          </div>
-        ))}
-      </div>
-    );
-  }
-  if (kind === 'priere') {
-    return (
-      <div className="relative h-44 w-64">
-        <div className="absolute inset-0 translate-x-3 rotate-3 border border-[#3b3129] bg-[#29211b]" />
-        <div className="absolute inset-0 flex flex-col justify-center bg-[#1f1914] p-5 text-[#f3ebdc]">
-          <p className="text-[0.65rem] font-bold uppercase tracking-widest text-[#f5c847]">Famille</p>
-          <p className="mt-1 font-display text-2xl font-extrabold">Ma famille</p>
-          <p className="mt-2 text-sm opacity-70">← glisse pour passer</p>
-        </div>
-      </div>
-    );
-  }
-  if (kind === 'ecaa') {
-    return (
-      <div className="w-full max-w-xs space-y-2">
-        <div className="bg-rouge p-3 font-display font-bold text-white">Protocole de crise</div>
-        <div className="card flex items-center gap-3 p-3"><Soleil value={0.4} size={44} petals={13} tones={['ciel', 'jaune']} /><span className="font-semibold">Formation · 5/13</span></div>
-        <div className="card p-3 text-sm"><b>Après une écoute</b><span className="block text-muted">ressenti, débrief sans nom</span></div>
-      </div>
-    );
-  }
-  if (kind === 'etudes') {
-    return (
-      <div className="w-full max-w-xs">
-        <div className="flex items-end gap-2">
-          {[1, 3, 7, 14, 30].map((d, k) => (
-            <div key={d} className="flex flex-1 flex-col items-center gap-1">
-              <div className="w-full" style={{ height: 24 + k * 22, background: k < 3 ? 'var(--orange)' : 'var(--paper-2)', border: '1px solid var(--line)' }} />
-              <span className="text-xs font-bold num">J+{d}</span>
-            </div>
-          ))}
-        </div>
-        <p className="mt-3 text-center text-sm font-semibold">Rappel actif espacé</p>
-      </div>
-    );
-  }
-  if (kind === 'plus') {
-    return <div className="flex h-24 w-24 items-center justify-center rounded-full bg-rouge text-white shadow-lg"><Plus className="h-10 w-10" strokeWidth={2.5} /></div>;
-  }
+/** La bulle d'explication : sous l'element s'il y a la place, sinon au-dessus, sinon en bas. */
+function Bubble({ step, rect, index, total, last, onPrev, onNext, onSkip, onPlace }) {
+  const [box, setBox] = useState(null);
+  const [style, setStyle] = useState({ opacity: 0 });
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  const width = Math.min(360, vw - 32);
+
+  useLayoutEffect(() => {
+    if (!box) return;
+    const h = box.offsetHeight;
+    if (!rect) {
+      setStyle({ left: (vw - width) / 2, top: Math.max(16, (vh - h) / 2) });
+      onPlace(null);
+      return;
+    }
+    const left = Math.min(Math.max(16, rect.left + rect.width / 2 - width / 2), vw - width - 16);
+    const below = rect.bottom + PAD + 12;
+    const above = rect.top - PAD - 12 - h;
+    let top;
+    if (below + h <= vh - 16) top = below;
+    else if (above >= 16) top = above;
+    else top = vh - h - 16; // element tres grand : bulle en bas de l'ecran
+    setStyle({ left, top });
+    onPlace(top);
+  }, [box, rect, vw, vh, width, step]); // eslint-disable-line react-hooks/exhaustive-deps
+
   return (
-    <div className="flex flex-col items-center gap-3">
-      <div className="flex h-20 w-20 items-center justify-center border-2 border-ink"><Share className="h-9 w-9" /></div>
-      <p className="text-sm font-semibold">Partager → Sur l'écran d'accueil</p>
+    <div
+      ref={setBox}
+      key={step.key}
+      className="fixed bg-paper p-4 text-ink shadow-[0_12px_40px_rgba(23,18,14,0.45)]"
+      style={{ width, borderTop: '3px solid var(--rouge)', ...style }}
+    >
+      <div className="mb-1 flex items-center justify-between">
+        <span className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-[0.12em] text-rouge">
+          <MiniSoleil size={14} />{step.kicker || 'Visite'}
+        </span>
+        <span className="text-xs text-muted num">{index + 1}/{total}</span>
+      </div>
+      <p className="font-display text-xl font-extrabold leading-tight">{step.title}</p>
+      <p className="mt-1.5 text-[0.95rem] leading-relaxed text-muted">{step.text}</p>
+      <div className="mt-4 flex items-center gap-2">
+        {!last && <button type="button" className="mr-auto text-sm font-semibold text-muted" onClick={onSkip}>Passer</button>}
+        {index > 0 && <button type="button" className="btn btn-secondary btn-sm" onClick={onPrev}>Retour</button>}
+        <button type="button" className={`btn btn-primary btn-sm ${last ? 'flex-1' : ''}`} onClick={onNext}>{last ? 'Commencer ma saison' : 'Suivant'}</button>
+      </div>
     </div>
   );
 }

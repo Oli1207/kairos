@@ -98,7 +98,7 @@ function Meditation({ habits }) {
 
   return (
     <div className="space-y-5">
-      <Card domain="esprit" className="flex items-center gap-4 p-4">
+      <Card domain="esprit" className="flex items-center gap-4 p-4" data-tour="plan-lecture">
         {plan ? (
           <>
             <Soleil value={(plan.current - 1) / plan.chapters} size={84} petals={Math.min(plan.chapters, 36)}>
@@ -210,7 +210,7 @@ function Prayer({ habits }) {
 
   return (
     <div className="space-y-5">
-      <Button size="lg" icon={Play} className="w-full" onClick={() => setPraying(true)}>Mode prière</Button>
+      <Button size="lg" icon={Play} className="w-full" onClick={() => setPraying(true)} data-tour="mode-priere">Mode prière</Button>
       {praying && (
         <PrayerMode
           title="Prière"

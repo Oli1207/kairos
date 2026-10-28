@@ -50,7 +50,7 @@ function Notifications() {
   return (
     <section>
       <SectionTitle>Rappels</SectionTitle>
-      <Card domain="esprit" className="p-4">
+      <Card domain="esprit" className="p-4" data-tour="rappels">
         <p className="text-sm">À l'heure exacte de chaque rendez-vous, puis une relance si rien n'est pointé après la marge de grâce. Aussi : rupture du jeûne, bilan du soir avant le coucher, bilan du dimanche.</p>
         {support.ok ? (
           <Button className="mt-3" variant={sub ? 'secondary' : 'primary'} icon={sub ? BellOff : Bell} loading={busy} onClick={toggle}>
@@ -181,7 +181,7 @@ function Timetable() {
   const remove = useRemove('schedule_blocks');
   const [f, setF] = useState(null);
   return (
-    <section>
+    <section data-tour="emploi">
       <SectionTitle action={<Button size="sm" variant="secondary" icon={Plus} onClick={() => setF({ title: '', weekday: 1, start_time: '08:00', end_time: '10:00', location: '' })}>Cours</Button>}>Mon emploi du temps</SectionTitle>
       <p className="mb-2 text-sm text-muted">Tes cours et engagements réguliers. Kairos s'en sert pour trouver tes créneaux libres.</p>
       {WEEK.map((d) => {

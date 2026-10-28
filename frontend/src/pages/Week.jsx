@@ -119,7 +119,7 @@ function Planner({ monday, days, habits, planned, checkins, blocks, profile, fas
       <Card className="p-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <Stat label="Temps libre restant cette semaine" value={`${Math.floor(totalFree / 60)} h ${String(totalFree % 60).padStart(2, '0')}`} sub={blocks.length ? 'Calculé à partir de ton emploi du temps.' : 'Saisis ton emploi du temps dans les réglages pour un calcul exact.'} />
-          <Button icon={Wand2} onClick={propose}>Placer automatiquement</Button>
+          <Button icon={Wand2} onClick={propose} data-tour="placer">Placer automatiquement</Button>
         </div>
         <div className="mt-4 grid grid-cols-2 gap-x-5 gap-y-2.5">
           {weekly.map((h) => {
@@ -247,7 +247,7 @@ function Review({ monday, habits, checkins }) {
 
   return (
     <div className="space-y-5">
-      <Card className="p-4">
+      <Card className="p-4" data-tour="bilan">
         <SectionTitle>Ta semaine en chiffres</SectionTitle>
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
           {scores.map((s) => <Stat key={s.key} label={s.label} value={`${Math.round(s.rate * 100)} %`} tone={TONE[s.key]} />)}

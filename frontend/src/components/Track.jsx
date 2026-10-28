@@ -38,7 +38,7 @@ export default function Track({ track, lessons, deck, tone = 'ciel', habits }) {
 
   return (
     <div className="space-y-4">
-      <Card className="flex items-center gap-4 p-4" style={{ borderTop: `3px solid var(--${tone})` }}>
+      <Card data-tour="formation" className="flex items-center gap-4 p-4" style={{ borderTop: `3px solid var(--${tone})` }}>
         <Soleil value={done / lessons.length} size={84} petals={lessons.length} tones={[tone, 'jaune']}>
           <span className="text-xs font-bold num">{done}/{lessons.length}</span>
         </Soleil>

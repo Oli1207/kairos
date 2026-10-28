@@ -66,7 +66,7 @@ function Workouts({ habits }) {
         </Card>
       )}
 
-      <div className="grid gap-3 sm:grid-cols-2">
+      <div className="grid gap-3 sm:grid-cols-2" data-tour="seances">
         {ROUTINES.map((r) => (
           <button key={r.key} type="button" onClick={() => setRoutine(r)} className="card flex flex-col p-4 text-left transition hover:border-ink" style={{ borderTop: `3px solid var(--${r.tone})` }}>
             <span className="flex items-baseline justify-between">
