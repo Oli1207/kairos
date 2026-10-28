@@ -40,7 +40,7 @@ export default function Auth() {
       return;
     }
     // Si la confirmation d'email est activee dans Supabase, pas de session tout de suite.
-    if (mode === 'signup' && !data.session) setInfo('Compte créé. Ouvre le lien reçu par email pour l\'activer, puis reviens te connecter.');
+    if (mode === 'signup' && !data.session) setInfo("Compte créé. Ouvre le lien reçu par email : il active ton compte et te connecte directement. Si tu utilises l'app installée sur l'écran d'accueil, connecte-toi ensuite une fois dans l'app.");
   };
 
   return (
